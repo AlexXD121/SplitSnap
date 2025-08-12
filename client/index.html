@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SplitSnap - Simple</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#FF6B35" />
+  </head>
+
+  <body>
+    <!-- Background Pattern -->
+    <div class="bg-pattern"></div>
+
+    <!-- Authentication Container -->
+    <div id="auth-container" class="auth-container">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="logo">
+            <span class="logo-icon">📸</span>
+            <h1 class="logo-text">SplitSnap</h1>
+          </div>
+          <p class="auth-tagline">Split bills from receipts instantly</p>
+        </div>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="signin">Sign In</button>
+          <button class="auth-tab" data-tab="signup">Sign Up</button>
+        </div>
+
+        <!-- Sign In Form -->
+        <div id="signin-form" class="auth-form">
+          <div class="input-group">
+            <input
+              type="email"
+              id="signin-email"
+              placeholder="Email"
+              class="auth-input"
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="password"
+              id="signin-password"
+              placeholder="Password"
+              class="auth-input"
+            />
+          </div>
+          <button id="signin-btn" class="btn btn-primary auth-btn">
+            Sign In
+          </button>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signup-form" class="auth-form hidden">
+          <div class="input-group">
+            <input
+              type="text"
+              id="signup-name"
+              placeholder="Full Name"
+              class="auth-input"
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="email"
+              id="signup-email"
+              placeholder="Email"
+              class="auth-input"
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="password"
+              id="signup-password"
+              placeholder="Password"
+              class="auth-input"
+            />
+          </div>
+          <button id="signup-btn" class="btn btn-primary auth-btn">
+            Create Account
+          </button>
+        </div>
+
+        <div class="auth-divider">
+          <span>or</span>
+        </div>
+
+        <button id="anonymous-btn" class="btn btn-outline auth-btn">
+          <span class="btn-icon">👤</span>
+          Continue Anonymously
+        </button>
+      </div>
+    </div>
+
+    <!-- Main App Container -->
+    <div id="main-app" class="container hidden">
+      <!-- Header with Navigation -->
+      <header class="header">
+        <div class="header-content">
+          <div class="logo">
+            <span class="logo-icon">📸</span>
+            <h1 class="logo-text">SplitSnap</h1>
+          </div>
+          <div class="header-actions">
+            <button
+              id="theme-toggle-btn"
+              class="btn btn-outline theme-toggle-btn"
+              title="Switch to dark theme"
+              aria-label="Switch to dark theme"
+              role="button"
+              tabindex="0"
+            >
+              <span class="theme-icon moon" aria-hidden="true">🌙</span>
+              <span class="theme-tooltip" aria-hidden="true"
+                >Switch to dark theme</span
+              >
+            </button>
+            <button id="demo-toggle-btn" class="btn btn-secondary demo-btn">
+              <span class="btn-icon">🎭</span>
+              Demo Mode
+            </button>
+            <button id="profile-btn" class="btn btn-outline profile-btn">
+              <span class="btn-icon">👤</span>
+              <span id="user-name">User</span>
+            </button>
+          </div>
+        </div>
+        <p class="tagline">Split bills from receipts instantly</p>
+      </header>
+
+      <!-- Profile Modal -->
+      <div id="profile-modal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>👤 Profile</h3>
+            <button id="close-profile-btn" class="close-btn">×</button>
+          </div>
+          <div class="modal-body">
+            <div class="profile-info">
+              <div class="profile-field">
+                <label>Name:</label>
+                <span id="profile-name">User</span>
+              </div>
+              <div class="profile-field">
+                <label>Email:</label>
+                <span id="profile-email">user@example.com</span>
+              </div>
+              <div class="profile-field">
+                <label>Member since:</label>
+                <span id="profile-date">Today</span>
+              </div>
+            </div>
+
+            <div class="profile-stats">
+              <h4>📊 Your Stats</h4>
+              <div class="stats-grid">
+                <div class="stat-card">
+                  <div class="stat-number" id="total-receipts">0</div>
+                  <div class="stat-label">Receipts Processed</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-number" id="total-splits">0</div>
+                  <div class="stat-label">Bills Split</div>
+                </div>
+                <div class="stat-card">
+                  <div class="stat-number" id="total-amount">₹0</div>
+                  <div class="stat-label">Total Amount</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="profile-history">
+              <h4>📋 Recent Activity</h4>
+              <div id="recent-activity" class="activity-list">
+                <div class="activity-item">
+                  <span class="activity-icon">📸</span>
+                  <span class="activity-text">Welcome to SplitSnap!</span>
+                  <span class="activity-time">Just now</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="signout-btn" class="btn btn-secondary">Sign Out</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <!-- Camera Section (Hidden initially) -->
+        <div id="camera-section" class="camera-section hidden">
+          <div class="camera-container">
+            <video id="camera-video" autoplay playsinline muted></video>
+            <div class="camera-overlay">
+              <div class="receipt-guide">
+                <p class="guide-text">Position receipt within frame</p>
+              </div>
+            </div>
+          </div>
+          <div class="camera-controls">
+            <button id="capture-btn" class="btn btn-primary">
+              📸 Capture Receipt
+            </button>
+            <button id="close-camera-btn" class="btn btn-secondary">
+              ✕ Close Camera
+            </button>
+          </div>
+        </div>
+
+        <!-- Upload Preview (Hidden initially) -->
+        <div id="upload-preview" class="upload-preview hidden">
+          <img id="preview-image" src="" alt="Receipt preview" />
+          <div class="preview-controls">
+            <button id="process-upload-btn" class="btn btn-primary">
+              ✓ Process Receipt
+            </button>
+            <button id="cancel-upload-btn" class="btn btn-secondary">
+              ✕ Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Main Buttons -->
+        <div id="main-buttons" class="main-buttons">
+          <button
+            id="capture-receipt-btn"
+            class="btn btn-primary btn-large"
+            aria-label="Capture receipt using camera"
+          >
+            📷 Capture Receipt Image
+          </button>
+          <button
+            id="upload-receipt-btn"
+            class="btn btn-outline btn-large"
+            aria-label="Upload receipt image file"
+          >
+            📁 Upload Receipt Image
+          </button>
+        </div>
+
+        <!-- Hidden file input -->
+        <input
+          type="file"
+          id="file-input"
+          accept="image/*"
+          style="display: none"
+        />
+      </main>
+
+      <!-- Processing Overlay -->
+      <div id="processing-overlay" class="processing-overlay hidden">
+        <div class="processing-content">
+          <div class="spinner"></div>
+          <p id="processing-text">Processing receipt...</p>
+        </div>
+      </div>
+
+      <!-- Success Message -->
+      <div id="success-message" class="success-message hidden">
+        <div class="success-icon">✅</div>
+        <h3>Receipt Processed Successfully!</h3>
+        <div id="ocr-results" class="ocr-results">
+          <!-- OCR results will be displayed here -->
+        </div>
+
+        <!-- Bill Splitting Section -->
+        <div class="bill-split-section">
+          <div class="split-header">
+            <h4>💰 Split This Bill</h4>
+            <p>Add people and assign items to split the bill</p>
+          </div>
+
+          <!-- Add People Section -->
+          <div class="add-people-section">
+            <div class="input-group">
+              <input
+                type="text"
+                id="person-name"
+                placeholder="Enter person's name"
+                class="person-input"
+              />
+              <button
+                id="add-person-btn"
+                class="btn btn-secondary add-person-btn"
+              >
+                <span class="btn-icon">👤</span>
+                Add Person
+              </button>
+            </div>
+
+            <div id="people-list" class="people-list">
+              <!-- Added people will appear here -->
+            </div>
+          </div>
+
+          <!-- Split Method Selection -->
+          <div class="split-method-section">
+            <label class="method-label">Split Method:</label>
+            <div class="method-buttons">
+              <button class="method-btn active" data-method="equal">
+                <span class="method-icon">⚖️</span>
+                Equal Split
+              </button>
+              <button class="method-btn" data-method="by_items">
+                <span class="method-icon">📝</span>
+                By Items
+              </button>
+            </div>
+          </div>
+
+          <!-- Item Assignment Section (Hidden initially) -->
+          <div
+            id="item-assignment-section"
+            class="item-assignment-section hidden"
+          >
+            <h5>Assign Items to People</h5>
+            <div id="items-assignment-list" class="items-assignment-list">
+              <!-- Items will be populated here -->
+            </div>
+          </div>
+
+          <!-- Split Actions -->
+          <div class="split-actions">
+            <button
+              id="calculate-split-btn"
+              class="btn btn-primary calculate-btn"
+            >
+              <span class="btn-icon">🧮</span>
+              Calculate Split
+            </button>
+          </div>
+
+          <!-- Split Results -->
+          <div id="split-results" class="split-results hidden">
+            <div class="results-header">
+              <h5>💸 Split Results</h5>
+            </div>
+            <div id="split-breakdown" class="split-breakdown">
+              <!-- Split calculation results will appear here -->
+            </div>
+            <div class="share-actions">
+              <button
+                id="generate-payments-btn"
+                class="btn btn-primary payment-btn"
+              >
+                <span class="btn-icon">💳</span>
+                Generate UPI Payments
+              </button>
+              <button id="share-split-btn" class="btn btn-success share-btn">
+                <span class="btn-icon">📱</span>
+                Share Split
+              </button>
+            </div>
+          </div>
+
+          <!-- UPI Payment Section -->
+          <div id="upi-payment-section" class="upi-payment-section hidden">
+            <div class="payment-header">
+              <h5>💳 UPI Payments</h5>
+              <p>Enter your UPI ID to receive payments</p>
+            </div>
+
+            <div class="upi-input-section">
+              <div class="input-group">
+                <input
+                  type="text"
+                  id="upi-id-input"
+                  placeholder="yourname@paytm"
+                  class="upi-input"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <button
+                  id="validate-upi-btn"
+                  class="btn btn-secondary validate-btn"
+                >
+                  <span class="btn-icon">✓</span>
+                  Validate
+                </button>
+              </div>
+              <div
+                id="upi-validation-message"
+                class="validation-message hidden"
+              ></div>
+            </div>
+
+            <div class="payment-actions">
+              <button
+                id="create-payments-btn"
+                class="btn btn-primary create-payments-btn"
+              >
+                <span class="btn-icon">🚀</span>
+                Create Payment Links
+              </button>
+            </div>
+
+            <!-- Payment Links Display -->
+            <div
+              id="payment-links-section"
+              class="payment-links-section hidden"
+            >
+              <div class="links-header">
+                <h6>🔗 Payment Links Generated</h6>
+                <p>Share these with your friends to collect payments</p>
+              </div>
+              <div id="payment-links-list" class="payment-links-list">
+                <!-- Payment links will be generated here -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="start-over-btn" class="btn btn-primary">
+          🔄 Capture Another Receipt
+        </button>
+      </div>
+
+      <!-- Error Message -->
+      <div id="error-message" class="error-message hidden">
+        <div class="error-icon">❌</div>
+        <h3>Processing Failed</h3>
+        <p id="error-text">Something went wrong. Please try again.</p>
+        <button id="retry-btn" class="btn btn-primary">🔄 Try Again</button>
+      </div>
+    </div>
+
+    <script src="theme-manager.js"></script>
+    <script src="auth.js"></script>
+    <script src="demo-data.js"></script>
+    <script src="script.js"></script>
+  </body>
+</html>
